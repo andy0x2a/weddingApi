@@ -18,6 +18,10 @@ public class Family {
     @Column(nullable = true)
     private String name;
 
+    @Column(nullable = true)
+    private Integer familySize;
+
+
     public int getId() {
         return id;
     }
@@ -45,4 +49,11 @@ public class Family {
     @OneToMany
     private List<RSVP> members;
 
+    public Integer getFamilySize() {
+        return familySize;
+    }
+
+    public void setFamilySize(Integer size) {
+        this.familySize= size;
+    }
 }

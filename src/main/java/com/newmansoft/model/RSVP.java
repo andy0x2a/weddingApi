@@ -22,9 +22,10 @@ public class RSVP {
     @Column(nullable = true)
     private String familyName;
 
-    public RSVP() {
 
-    }
+    @Transient
+    private Integer familyId;
+
 
     public String getName() {
         return name;
@@ -56,5 +57,13 @@ public class RSVP {
 
     public void setFamilyName(String familyId) {
         this.familyName = familyName;
+    }
+
+    public Integer getFamilyId() {
+        return familyId;
+    }
+
+    public void setFamilyId(Integer familyId) {
+        this.familyId = familyId;
     }
 }
