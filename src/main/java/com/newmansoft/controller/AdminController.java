@@ -21,7 +21,7 @@ import java.util.List;
  */
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/admin/{wedding}")
 @CrossOrigin()
 
 public class AdminController {
@@ -33,8 +33,8 @@ public class AdminController {
     @Autowired
     private AuthorizationRepository authorizationRepository;
 
-    private String getAdminPassword() {
-              Iterable<AuthDao> daos = authorizationRepository.findAll();
+    private String getAdminPassword(String wedding) {
+              Iterable<AuthDao> daos = authorizationRepository.findByWedding(wedding);
 
         if (daos == null ) {
             return null;
@@ -50,8 +50,9 @@ public class AdminController {
     @RequestMapping("/guests/")
     @ResponseBody()
     public ResponseEntity<?> getAllGuests(
+            @PathVariable String wedding,
             @RequestHeader(value = "adminPass") String adminPassword) {
-        if (!getAdminPassword().equals(adminPassword)) {
+        if (!getAdminPassword(wedding).equals(adminPassword)) {
            return new ResponseEntity<>(Authorization.FAIL, HttpStatus.UNAUTHORIZED);
         }
         return new ResponseEntity<>(rsvpRepository.findAll(), HttpStatus.OK);
@@ -59,9 +60,10 @@ public class AdminController {
     @RequestMapping("/login/")
     @ResponseBody()
     public ResponseEntity<?> doLogin(
+            @PathVariable String wedding,
             @RequestHeader(value = "adminPass") String adminPassword) {
 
-        if (!getAdminPassword().equals(adminPassword)) {
+        if (!getAdminPassword(wedding).equals(adminPassword)) {
             return new ResponseEntity<>(Authorization.FAIL, HttpStatus.UNAUTHORIZED);
         }
         return new ResponseEntity<>(Authorization.SUCCESS, HttpStatus.OK);

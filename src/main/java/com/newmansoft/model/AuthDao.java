@@ -17,6 +17,17 @@ public class AuthDao {
     @Column(nullable = true)
     private String password;
 
+    public String getWedding() {
+        return wedding;
+    }
+
+    public void setWedding(String wedding) {
+        this.wedding = wedding;
+    }
+
+    @Column(nullable =false)
+    private String wedding;
+
     public int getId() {
         return id;
     }

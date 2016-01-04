@@ -21,6 +21,9 @@ public class Family {
     @Column(nullable = true)
     private Integer familySize;
 
+    @Column(nullable = true)
+    private String wedding;
+
 
     public int getId() {
         return id;
@@ -55,5 +58,12 @@ public class Family {
 
     public void setFamilySize(Integer size) {
         this.familySize= size;
+    }
+    public String getWedding() {
+        return wedding;
+    }
+
+    public void setWedding(String wedding) {
+        this.wedding = wedding;
     }
 }

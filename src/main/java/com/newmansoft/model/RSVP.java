@@ -22,6 +22,9 @@ public class RSVP {
     @Column(nullable = true)
     private String familyName;
 
+    @Column(nullable = true)
+    private String wedding;
+
 
     @Transient
     private Integer familyId;
@@ -65,5 +68,13 @@ public class RSVP {
 
     public void setFamilyId(Integer familyId) {
         this.familyId = familyId;
+    }
+
+    public String getWedding() {
+        return wedding;
+    }
+
+    public void setWedding(String wedding) {
+        this.wedding = wedding;
     }
 }
