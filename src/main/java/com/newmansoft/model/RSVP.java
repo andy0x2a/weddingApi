@@ -1,6 +1,7 @@
 package com.newmansoft.model;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "rsvp")
@@ -28,6 +29,8 @@ public class RSVP {
 
     @Transient
     private Integer familyId;
+
+
 
 
     public String getName() {
@@ -77,4 +80,6 @@ public class RSVP {
     public void setWedding(String wedding) {
         this.wedding = wedding;
     }
+
+
 }

@@ -4,6 +4,7 @@ import com.newmansoft.model.Family;
 import com.newmansoft.model.RSVP;
 import com.newmansoft.services.FamilyRepository;
 import com.newmansoft.services.RSVPRepository;
+import com.newmansoft.services.SendEmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.stereotype.Controller;
@@ -23,6 +24,10 @@ public class RsvpController {
 
     @Autowired
     FamilyRepository familyRepository;
+
+    @Autowired
+    SendEmailService sendEmailService;
+
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     @ResponseBody
@@ -54,6 +59,7 @@ public class RsvpController {
     public List<RSVP> update(@PathVariable String wedding, @RequestBody List<RSVP> rsvps) {
         List<RSVP> response = new ArrayList<>();
 
+        String message = "";
         Map<Integer, Family> familiesToSave = new HashMap<Integer, Family>();
 
         for (RSVP rsvp : rsvps) {
@@ -72,11 +78,13 @@ public class RsvpController {
 
             }
 
+            message+=" \n" + rsvp.getName() + " " + rsvp.getStatus();
             response.add(rsvpRepository.save(rsvp));
 
         }
 
         familyRepository.save(familiesToSave.values());
+        sendEmailService.sendEmail("RSVP Recieved", message, "andyandem2016@gmail.com");
 
         return response;
     }

@@ -1,19 +1,14 @@
 package com.newmansoft.controller;
 
-import com.newmansoft.model.AuthDao;
-import com.newmansoft.model.Authorization;
-import com.newmansoft.model.RSVP;
+import com.newmansoft.model.*;
 import com.newmansoft.services.AuthorizationRepository;
+import com.newmansoft.services.FamilyRepository;
 import com.newmansoft.services.RSVPRepository;
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -28,6 +23,9 @@ public class AdminController {
 
     @Autowired
     private RSVPRepository rsvpRepository;
+
+    @Autowired
+    private FamilyRepository familyRepository;
 
 
     @Autowired
@@ -46,6 +44,48 @@ public class AdminController {
         return null;
     }
 
+    @RequestMapping(value="/family/", method = RequestMethod.POST )
+    public ResponseEntity<?> addFamily(
+            @PathVariable String wedding,
+            @RequestBody Family family,
+            @RequestHeader(value = "adminPass") String adminPassword) {
+        if (!getAdminPassword(wedding).equals(adminPassword)) {
+            return new ResponseEntity<>(Authorization.FAIL, HttpStatus.UNAUTHORIZED);
+        }
+
+        family.setWedding(wedding);
+        Family save = familyRepository.save(family);
+
+        return new ResponseEntity<>(save, HttpStatus.OK);
+    }
+
+    @RequestMapping(value="/guests/{id}", method = RequestMethod.DELETE )
+    public ResponseEntity<?> deleteGuest(
+            @PathVariable String wedding,
+            @PathVariable int id,
+            @RequestHeader(value = "adminPass") String adminPassword) {
+        if (!getAdminPassword(wedding).equals(adminPassword)) {
+            return new ResponseEntity<>(Authorization.FAIL, HttpStatus.UNAUTHORIZED);
+        }
+        RSVP guestToDelete = rsvpRepository.findOne(id);
+        if (guestToDelete == null) {
+            return new ResponseEntity<>(Authorization.FAIL, HttpStatus.NOT_FOUND);
+        }
+        if (!guestToDelete.getWedding().equals(wedding)) {
+            return new ResponseEntity<>(Authorization.FAIL, HttpStatus.UNAUTHORIZED);
+        }
+
+        List<Family> allFamilies =familyRepository.findByWedding(wedding);
+        if (allFamilies != null) {
+            allFamilies.stream().filter(family -> family.getMembers().contains(guestToDelete)).forEach(family -> {
+                family.getMembers().remove(guestToDelete);
+                familyRepository.save(family);
+            });
+        }
+
+        rsvpRepository.delete(id) ;
+        return new ResponseEntity<>(Authorization.SUCCESS, HttpStatus.OK);
+    }
 
     @RequestMapping("/guests/")
     @ResponseBody()
@@ -55,7 +95,7 @@ public class AdminController {
         if (!getAdminPassword(wedding).equals(adminPassword)) {
            return new ResponseEntity<>(Authorization.FAIL, HttpStatus.UNAUTHORIZED);
         }
-        return new ResponseEntity<>(rsvpRepository.findAll(), HttpStatus.OK);
+        return new ResponseEntity<>(rsvpRepository.findByWedding(wedding), HttpStatus.OK);
     }
     @RequestMapping("/login/")
     @ResponseBody()
