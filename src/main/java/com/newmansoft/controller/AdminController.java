@@ -59,6 +59,25 @@ public class AdminController {
         return new ResponseEntity<>(save, HttpStatus.OK);
     }
 
+
+    @RequestMapping(value="/family/{id}", method = RequestMethod.PUT )
+    public ResponseEntity<?> updateFamily(
+            @PathVariable String wedding,
+            @PathVariable int id,
+            @RequestBody Family family,
+            @RequestHeader(value = "adminPass") String adminPassword) {
+        if (!getAdminPassword(wedding).equals(adminPassword)) {
+            return new ResponseEntity<>(Authorization.FAIL, HttpStatus.UNAUTHORIZED);
+        }
+
+        family.setWedding(wedding);
+        family.setId(id);
+
+        Family save = familyRepository.save(family);
+
+        return new ResponseEntity<>(save, HttpStatus.OK);
+    }
+
     @RequestMapping(value="/guests/{id}", method = RequestMethod.DELETE )
     public ResponseEntity<?> deleteGuest(
             @PathVariable String wedding,

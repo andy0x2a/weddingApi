@@ -56,7 +56,8 @@ public class RsvpController {
     }
     @RequestMapping(value = "/updateList", method = RequestMethod.POST)
     @ResponseBody
-    public List<RSVP> update(@PathVariable String wedding, @RequestBody List<RSVP> rsvps) {
+    public List<RSVP> update(@PathVariable String wedding, @RequestBody List<RSVP> rsvps,
+                             @RequestParam(value="admin", defaultValue ="false") Boolean isAdmin ) {
         List<RSVP> response = new ArrayList<>();
 
         String message = "";
@@ -84,7 +85,14 @@ public class RsvpController {
         }
 
         familyRepository.save(familiesToSave.values());
-        sendEmailService.sendEmail("RSVP Recieved", message, "andyandem2016@gmail.com");
+        String address = (wedding.equals("karen")?"kmnewman@shaw.ca":"andyandem2016@gmail.com");
+
+        if (!isAdmin) {
+            sendEmailService.sendEmail("RSVP Received", message, address);
+        } else {
+            sendEmailService.sendEmail("Database updated", "Your RSVP Database has been updated", address);
+        }
+
 
         return response;
     }
