@@ -80,6 +80,12 @@ public class RsvpController {
             }
 
             message+=" \n" + rsvp.getName() + " " + rsvp.getStatus();
+            if (rsvp.getComment() != null) {
+                message +=" \n Comment: ";
+                message += rsvp.getComment();
+                message +="\n";
+
+            }
             response.add(rsvpRepository.save(rsvp));
 
         }

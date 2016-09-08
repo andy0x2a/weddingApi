@@ -24,6 +24,17 @@ public class Family {
     @Column(nullable = true)
     private String wedding;
 
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
+    @Column(nullable = true)
+    private String note;
+
 
     public int getId() {
         return id;

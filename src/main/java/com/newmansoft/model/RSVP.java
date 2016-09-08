@@ -31,6 +31,17 @@ public class RSVP {
     private Integer familyId;
 
 
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    @Transient
+    private String comment;
+
 
 
     public String getName() {
